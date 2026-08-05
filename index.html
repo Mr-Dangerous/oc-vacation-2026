@@ -421,6 +421,8 @@ const DAYS = [
   },
   {
     date: '2026-08-11', label: 'Tuesday', title: 'Aug 11',
+    grandmaDeparts: true,
+    grandmaLabel: '👴 Pop Pop departs PM',
     color: '#f3f8ff',
     slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' }
   },
@@ -622,9 +624,9 @@ DAYS.forEach(day => {
   card.style.borderTopWidth = '4px';
   card.style.borderTopStyle = 'solid';
 
-  let grandmaHtml = '';
-  if (day.grandma)        grandmaHtml = '<span class="grandma-badge">👵 Grandma here</span>';
-  if (day.grandmaDeparts) grandmaHtml = '<span class="grandma-badge" style="background:#fff3e0;color:#e65100;">👵 Grandma departs</span>';
+    let grandmaHtml = '';
+    if (day.grandma)        grandmaHtml = '<span class="grandma-badge">👵 Grandma here</span>';
+    if (day.grandmaDeparts) grandmaHtml = `<span class="grandma-badge" style="background:#fff3e0;color:#e65100;">${day.grandmaLabel || '👵 Grandma departs'}</span>`;
 
   let slotsHtml = SLOTS.map(s => {
     const text = day.slots[s.key];
@@ -684,6 +686,19 @@ RESTAURANTS.forEach(r => {
 });
 
 const ATTRACTIONS = [
+  {
+    name: 'OC Speedway (Jolly Roger Go-Karts)',
+    icon: '🏎️',
+    type: 'Go-Karts / Amusement',
+    address: '30th St Park: 2901 Coastal Hwy, Ocean City · At the Pier: Boardwalk at the Pier, Ocean City',
+    phone: '(410) 289-3477',
+    website: 'jollyrogeramusements.com',
+    hours: 'Seasonal · typically noon–midnight peak summer (Memorial Day–Labor Day)',
+    cost: 'Fun Card system (reloadable card, no cash per ride) · Go-karts ~$5–10/ride · Wristband options available',
+    kidRating: '⭐⭐ Best 3yo+ (with adult)',
+    note: 'Junior Karts for smaller kids (~36–42" min solo), Double Karts for parent + child together, Sprint Karts for bigger kids/adults (54"+). Also has waterpark (Splash Mountain at 30th St), mini golf, and thrill rides. Fun Card system — load money and swipe per ride.',
+    color: '#e63946'
+  },
   {
     name: "Trimper's Rides",
     icon: '🎠',
