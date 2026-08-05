@@ -628,9 +628,9 @@ DAYS.forEach(day => {
   card.style.borderTopStyle = 'solid';
 
     let grandmaHtml = '';
-    if (day.grandma)        grandmaHtml = '<span class="grandma-badge">👵 Grandma here</span>';
+    if (day.grandma)        grandmaHtml = '<span class="grandma-badge">👵 Grandma already there</span>';
     if (day.grandmaDeparts) grandmaHtml = `<span class="grandma-badge" style="background:#fff3e0;color:#e65100;">${day.grandmaLabel || '👵 Grandma departs'}</span>`;
-    if (day.popPop)         grandmaHtml += '<span class="grandma-badge" style="background:#e8f4fd;color:#1565c0;">👴 Pop Pop here</span>';
+    if (day.popPop)         grandmaHtml += '<span class="grandma-badge" style="background:#e8f4fd;color:#1565c0;">👴 Pop Pop already there</span>';
     if (day.popPopDeparts)  grandmaHtml += '<span class="grandma-badge" style="background:#fff3e0;color:#e65100;">👴 Pop Pop departs PM</span>';
 
   let slotsHtml = SLOTS.map(s => {
