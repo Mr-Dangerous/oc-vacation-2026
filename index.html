@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏖️ OC Vacation 2026</title>
+  <style>
+    :root {
+      --ocean: #0077b6;
+      --sky: #90e0ef;
+      --sand: #f9c74f;
+      --wave: #00b4d8;
+      --dark: #03045e;
+      --card: #ffffff;
+      --bg: #caf0f8;
+      --text: #023e8a;
+      --muted: #48cae4;
+      --green: #2dc653;
+      --orange: #f4a261;
+      --red: #e63946;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--ocean) 60%, var(--wave) 100%);
+      color: white;
+      padding: 1.5rem 1.5rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.3);
+    }
+    header h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: .5px; }
+    header p { font-size: .85rem; opacity: .8; margin-top: .2rem; }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+
+    .countdown {
+      background: rgba(255,255,255,.15);
+      border-radius: 8px;
+      padding: .4rem .8rem;
+      font-size: .85rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: .5rem;
+      padding: .8rem 1.5rem 0;
+      background: var(--ocean);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      background: rgba(255,255,255,.15);
+      border: none;
+      color: white;
+      padding: .5rem 1.1rem;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      font-size: .85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background .2s;
+    }
+    .tab-btn:hover { background: rgba(255,255,255,.3); }
+    .tab-btn.active { background: var(--bg); color: var(--dark); }
+
+    /* ── Main content ── */
+    main { padding: 1rem 1.5rem 2rem; max-width: 960px; margin: 0 auto; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Day cards ── */
+    .day-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .day-card {
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,77,102,.12);
+      overflow: hidden;
+      border: 2px solid transparent;
+      transition: border-color .2s, transform .15s;
+    }
+    .day-card:hover { transform: translateY(-2px); border-color: var(--wave); }
+    .day-card.today { border-color: var(--sand); box-shadow: 0 4px 18px rgba(249,199,79,.4); }
+    .day-card.past { opacity: .5; }
+
+    .day-card-header {
+      padding: .7rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .day-card-header h3 { font-size: .95rem; font-weight: 700; }
+    .day-card-header .date-badge {
+      font-size: .75rem;
+      background: var(--bg);
+      color: var(--text);
+      padding: .2rem .5rem;
+      border-radius: 99px;
+      font-weight: 600;
+    }
+
+    .day-card-body { padding: .5rem 1rem 1rem; }
+
+    .slot {
+      display: flex;
+      gap: .5rem;
+      align-items: flex-start;
+      padding: .3rem 0;
+      border-bottom: 1px solid #eef4f7;
+      font-size: .82rem;
+    }
+    .slot:last-child { border-bottom: none; }
+    .slot-icon { font-size: 1rem; min-width: 1.4rem; text-align: center; margin-top: .05rem; }
+    .slot-label { color: var(--muted); font-weight: 600; min-width: 80px; font-size: .75rem; }
+    .slot-text { color: var(--dark); flex: 1; }
+    .slot-text.empty { color: #b0c4cd; font-style: italic; }
+
+    .grandma-badge {
+      display: inline-block;
+      background: #ffe8f0;
+      color: #c9184a;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .15rem .45rem;
+      border-radius: 99px;
+      margin-left: .3rem;
+    }
+
+    .today-banner {
+      background: linear-gradient(90deg, var(--sand), #f8961e);
+      color: var(--dark);
+      font-size: .75rem;
+      font-weight: 700;
+      text-align: center;
+      padding: .3rem;
+      letter-spacing: .5px;
+    }
+
+    /* ── Tide / Beach section ── */
+    .tide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: .8rem;
+      margin-top: 1rem;
+    }
+
+    .tide-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: .9rem 1rem;
+      box-shadow: 0 2px 8px rgba(0,77,102,.1);
+      border-left: 4px solid var(--muted);
+    }
+    .tide-card.best { border-left-color: var(--sand); background: #fffdf0; }
+    .tide-card.scheduled { border-left-color: var(--green); background: #f0fff6; }
+    .tide-card.travel { border-left-color: #ccc; background: #f8f8f8; opacity: .6; }
+
+    .tide-card h4 { font-size: .85rem; font-weight: 700; margin-bottom: .3rem; }
+    .tide-card .tide-time { font-size: 1.1rem; font-weight: 800; color: var(--ocean); }
+    .tide-card .tide-height { font-size: .75rem; color: var(--muted); }
+    .tide-card .tide-window { font-size: .75rem; color: #555; margin-top: .3rem; }
+    .tide-card .tide-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: .2rem; }
+    .rating { font-size: 1rem; margin-top: .3rem; }
+
+    /* ── Restaurants ── */
+    .restaurant-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .resto-card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 1rem;
+      box-shadow: 0 2px 10px rgba(0,77,102,.1);
+      border-top: 4px solid var(--ocean);
+    }
+    .resto-card h3 { font-size: .95rem; font-weight: 800; margin-bottom: .2rem; }
+    .resto-card .cuisine { font-size: .75rem; color: var(--muted); font-weight: 600; margin-bottom: .5rem; }
+    .resto-row { display: flex; gap: .5rem; align-items: center; font-size: .8rem; margin-top: .3rem; color: #333; }
+    .resto-row a { color: var(--ocean); text-decoration: none; font-weight: 600; }
+    .resto-row a:hover { text-decoration: underline; }
+    .hours-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .1rem .5rem; font-size: .72rem; margin-top: .4rem; color: #555; }
+
+    /* ── Notes / misc ── */
+    .info-card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 1.2rem 1.4rem;
+      box-shadow: 0 2px 10px rgba(0,77,102,.1);
+      margin-top: 1rem;
+    }
+    .info-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: .7rem; color: var(--ocean); }
+    .info-card ul { padding-left: 1.2rem; }
+    .info-card li { font-size: .85rem; margin-bottom: .3rem; color: #333; }
+
+    /* ── Utility ── */
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 1.2rem;
+      margin-bottom: .2rem;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .15rem .5rem;
+      border-radius: 99px;
+    }
+    .pill-green { background: #d4edda; color: #155724; }
+    .pill-yellow { background: #fff3cd; color: #856404; }
+    .pill-blue { background: #cce5ff; color: #004085; }
+
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.2rem; }
+      main { padding: .8rem .8rem 2rem; }
+      .tabs { padding: .8rem .8rem 0; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div>
+      <h1>🏖️ OC Vacation 2026</h1>
+      <p>Ocean Pines, MD &nbsp;·&nbsp; Aug 8 – 16</p>
+    </div>
+    <div class="countdown" id="countdown">Loading...</div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('itinerary')">📅 Itinerary</button>
+  <button class="tab-btn" onclick="showTab('beach')">🌊 Beach & Tides</button>
+  <button class="tab-btn" onclick="showTab('food')">🍕 Takeout</button>
+  <button class="tab-btn" onclick="showTab('info')">📍 Info</button>
+</div>
+
+<main>
+
+  <!-- ══════════════════ ITINERARY ══════════════════ -->
+  <div class="tab-panel active" id="tab-itinerary">
+    <div class="section-title">🗓️ Day-by-Day Schedule</div>
+    <div class="day-grid" id="day-grid"></div>
+  </div>
+
+  <!-- ══════════════════ BEACH & TIDES ══════════════════ -->
+  <div class="tab-panel" id="tab-beach">
+    <div class="section-title">🏖️ 28th Street Beach — Ocean City, MD</div>
+    <p style="font-size:.82rem;color:#555;margin:.3rem 0 .8rem">Surf cam · outdoor shower · sandbar. Best visited around low tide. <span class="pill pill-green">✓ Scheduled Aug 12</span> <span class="pill pill-green">✓ Scheduled Aug 14</span></p>
+    <div class="tide-grid" id="tide-grid"></div>
+
+    <div class="info-card" style="margin-top:1.2rem">
+      <h3>🌊 How to Use the Tide Info</h3>
+      <ul>
+        <li>Arrive <strong>~1 hour before low tide</strong> for the most exposed sandbar</li>
+        <li>The sandbar is best from <strong>1 hr before → 2 hrs after</strong> low tide</li>
+        <li>Tides shift ~50 min later each day — midweek aligns perfectly with late afternoon</li>
+        <li>Check the <strong>28th St surf cam</strong> before you go: <a href="https://www.surfline.com/surf-report/ocean-city/5842041f4e65fad6a7708851" target="_blank" style="color:var(--ocean)">Surfline OC</a></li>
+        <li>NWS forecast: <a href="https://forecast.weather.gov/MapClick.php?CityName=Ocean+City&state=MD&site=AKQ" target="_blank" style="color:var(--ocean)">weather.gov Ocean City MD</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════ FOOD ══════════════════ -->
+  <div class="tab-panel" id="tab-food">
+    <div class="section-title">🍕 Takeout & Delivery — Ocean Pines Area</div>
+    <p style="font-size:.82rem;color:#555;margin:.3rem 0 .8rem">Serpone's, Plaza Tapatia & Sue's Asian are all on <strong>Manklin Creek Rd</strong> — basically the same plaza. 🎉</p>
+    <div class="restaurant-grid" id="resto-grid"></div>
+
+    <div class="info-card">
+      <h3>💡 Tips</h3>
+      <ul>
+        <li>Call ahead on busy summer nights — peak season wait times can be long</li>
+        <li>Search zip <strong>21811</strong> on DoorDash / Grubhub / Uber Eats for current delivery availability</li>
+        <li>Hunan Garden lunch specials are under $10, even on weekends</li>
+        <li>Sue's Asian has both Chinese AND sushi/Japanese if you want variety in one order</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════ INFO ══════════════════ -->
+  <div class="tab-panel" id="tab-info">
+    <div class="section-title">📍 Key Locations & Distances</div>
+    <div class="info-card">
+      <h3>🗺️ From Ocean Pines</h3>
+      <ul>
+        <li>🏖️ <strong>Ocean City Boardwalk / Beach</strong> — ~10–15 min</li>
+        <li>🏖️ <strong>28th Street Beach (OC)</strong> — ~15 min</li>
+        <li>🛒 <strong>Berlin, MD (Farmers Market, restaurants)</strong> — ~10–15 min</li>
+        <li>🐴 <strong>Assateague Island</strong> — ~20 min</li>
+        <li>🦁 <strong>Salisbury Zoo</strong> — ~40 min (FREE admission)</li>
+        <li>🏖️ <strong>Rehoboth Beach, DE</strong> — ~40–45 min</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>📚 Libraries (Kids Programs)</h3>
+      <ul>
+        <li>📚 <strong>Worcester County Library — Ocean Pines Branch</strong><br>11107 Cathell Rd · (410) 208-4014 · Mon–Thu 10–8, Fri–Sat 10–5<br><em>Monday Toddler Time ~10 AM (call to confirm Aug 2026)</em></li>
+        <li>📚 <strong>Ocean City Free Public Library</strong><br>10003 Coastal Hwy · (410) 524-1818<br><em>Monday story times in summer (call to confirm)</em></li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>🎡 Family Attractions</h3>
+      <ul>
+        <li>🎠 <strong>Trimper's Rides</strong> — 1 S Boardwalk, OC · Historic rides, great for young kids</li>
+        <li>🎡 <strong>Jolly Roger Amusement / Splash Mountain</strong> — 2901 Baltimore Ave, OC</li>
+        <li>🐴 <strong>Assateague Island NPS</strong> — Wild ponies + Junior Ranger program · nps.gov/asis</li>
+        <li>🦁 <strong>Salisbury Zoo</strong> — 755 S Park Dr, Salisbury · FREE, open 8 AM–7:30 PM daily</li>
+        <li>🎵 <strong>Rehoboth Beach Bandstand</strong> — Free concerts Sunday evenings ~7 PM</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>⏰ Daily Schedule Structure</h3>
+      <ul>
+        <li>🌅 <strong>Early Morning (~7–9 AM)</strong> — Bike ride, kayaking, walking</li>
+        <li>🌞 <strong>Morning (~9 AM–noon)</strong> — Bigger outing / trip of the day</li>
+        <li>🥪 <strong>Lunch (~noon–1 PM)</strong> — Usually at home</li>
+        <li>😴 <strong>Early Afternoon / Naptime (~1–3:30 PM)</strong> — Pool, bike ride, chill only</li>
+        <li>🌊 <strong>Late Afternoon (~3:30–6 PM)</strong> — Going out: beach, boardwalk, etc.</li>
+        <li>🍽️ <strong>Dinner (~6–7:30 PM)</strong> — Often at home; sometimes out</li>
+        <li>🌙 <strong>Evening (~7:30 PM+)</strong> — Adults / older kids only</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── Data ──────────────────────────────────────────────
+const DAYS = [
+  {
+    date: '2026-08-08', label: 'Saturday', title: 'Aug 8',
+    grandma: true,
+    color: '#e0f0ff',
+    slots: {
+      earlyMorning: '',
+      morning: '🚗 Travel Day — hit the road!',
+      lunch: '',
+      naptime: '',
+      lateAfternoon: '',
+      dinner: '',
+      evening: ''
+    }
+  },
+  {
+    date: '2026-08-09', label: 'Sunday', title: 'Aug 9',
+    grandma: true,
+    color: '#e8f5e9',
+    slots: {
+      earlyMorning: '',
+      morning: '🛒 Berlin Farmers Market (17 Commerce St, Berlin · ~8:30 AM–1 PM)',
+      lunch: '',
+      naptime: '🏊 Ocean Pines Yacht Club Pool',
+      lateAfternoon: '',
+      dinner: '',
+      evening: ''
+    }
+  },
+  {
+    date: '2026-08-10', label: 'Monday', title: 'Aug 10',
+    grandmaDeparts: true,
+    color: '#fff8e1',
+    slots: {
+      earlyMorning: '',
+      morning: '🦁 Salisbury Zoo — weather permitting (FREE · ~40 min)',
+      lunch: '',
+      naptime: '',
+      lateAfternoon: '',
+      dinner: '',
+      evening: ''
+    }
+  },
+  {
+    date: '2026-08-11', label: 'Tuesday', title: 'Aug 11',
+    color: '#f3f8ff',
+    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' }
+  },
+  {
+    date: '2026-08-12', label: 'Wednesday', title: 'Aug 12',
+    color: '#f0fff4',
+    slots: {
+      earlyMorning: '',
+      morning: '',
+      lunch: '',
+      naptime: '🏖️ 28th Street Beach (Low tide 1:55 PM — lowest of trip!)',
+      lateAfternoon: '',
+      dinner: '',
+      evening: ''
+    }
+  },
+  {
+    date: '2026-08-13', label: 'Thursday', title: 'Aug 13',
+    color: '#f3f8ff',
+    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' }
+  },
+  {
+    date: '2026-08-14', label: 'Friday', title: 'Aug 14',
+    color: '#fff3e0',
+    slots: {
+      earlyMorning: '',
+      morning: '',
+      lunch: '',
+      naptime: '',
+      lateAfternoon: '🏖️ 28th Street Beach (Low tide 3:40 PM — perfect window)',
+      dinner: '',
+      evening: ''
+    }
+  },
+  {
+    date: '2026-08-15', label: 'Saturday', title: 'Aug 15',
+    color: '#f3f8ff',
+    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' }
+  },
+  {
+    date: '2026-08-16', label: 'Sunday', title: 'Aug 16',
+    color: '#fce4ec',
+    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' }
+  }
+];
+
+const SLOTS = [
+  { key: 'earlyMorning', icon: '🌅', label: 'Early AM' },
+  { key: 'morning',      icon: '🌞', label: 'Morning'  },
+  { key: 'lunch',        icon: '🥪', label: 'Lunch'    },
+  { key: 'naptime',      icon: '😴', label: 'Naptime'  },
+  { key: 'lateAfternoon',icon: '🌊', label: 'Late PM'  },
+  { key: 'dinner',       icon: '🍽️', label: 'Dinner'   },
+  { key: 'evening',      icon: '🌙', label: 'Evening'  }
+];
+
+const TIDES = [
+  { date: 'Aug 8',  day: 'Sat', low: '9:47 AM',  height: '0.17',  window: '~8:45 AM – 11 AM',    stars: 0, note: 'Travel day', type: 'travel' },
+  { date: 'Aug 9',  day: 'Sun', low: '10:53 AM', height: '0.13',  window: '~9:45 AM – Noon',     stars: 1, note: 'During Berlin Market morning', type: '' },
+  { date: 'Aug 10', day: 'Mon', low: '11:58 AM', height: '0.07',  window: '~11 AM – 1 PM',       stars: 1, note: 'Zoo day / overlaps lunch', type: '' },
+  { date: 'Aug 11', day: 'Tue', low: '12:59 PM', height: '-0.00', window: '~Noon – 2:30 PM',     stars: 2, note: 'Eats into naptime', type: '' },
+  { date: 'Aug 12', day: 'Wed', low: '1:55 PM',  height: '-0.04', window: '~12:45 PM – 3:30 PM', stars: 3, note: '✅ Scheduled — naptime slot', type: 'scheduled' },
+  { date: 'Aug 13', day: 'Thu', low: '2:48 PM',  height: '-0.02', window: '~1:45 PM – 4:30 PM',  stars: 3, note: 'Best late afternoon alignment', type: 'best' },
+  { date: 'Aug 14', day: 'Fri', low: '3:40 PM',  height: '0.07',  window: '~2:30 PM – 5 PM',     stars: 3, note: '✅ Scheduled — late afternoon slot', type: 'scheduled' },
+  { date: 'Aug 15', day: 'Sat', low: '4:32 PM',  height: '0.20',  window: '~3:30 PM – 6 PM',     stars: 2, note: 'Good late afternoon window', type: '' },
+  { date: 'Aug 16', day: 'Sun', low: '5:26 PM',  height: '0.37',  window: '~4:30 PM – 7 PM',     stars: 1, note: 'Last day', type: '' }
+];
+
+const RESTAURANTS = [
+  {
+    name: "Serpone's Pizzeria",
+    cuisine: '🍕 Pizza · Subs · Salads',
+    phone: '(410) 973-2894',
+    address: '11007 Manklin Creek Rd, Berlin',
+    hours: { 'Mon–Thu': '11 AM – 8 PM', 'Fri–Sat': '11 AM – 9 PM', 'Sun': '12 – 8 PM' },
+    options: 'Takeout & Delivery',
+    rating: '4.6 ⭐',
+    note: 'Best Sicilian on Eastern Shore. Garlic knots, wings, white pizza.',
+    color: '#e63946'
+  },
+  {
+    name: 'Plaza Tapatia',
+    cuisine: '🌮 Mexican',
+    phone: '(410) 208-0010',
+    address: '11007 Manklin Creek Rd #9, Berlin',
+    hours: { 'Mon': '11 AM – 9:30 PM', 'Tue–Wed': '11 AM – 10 PM', 'Thu': '11 AM – 9:30 PM', 'Fri': '11 AM – 10 PM', 'Sat': '12 – 10 PM', 'Sun': '12 – 9 PM' },
+    options: 'Takeout & Delivery · Kids Menu',
+    rating: '3.8 ⭐',
+    note: 'Next door to Serpone\'s. Crab quesadilla, carne asada tacos, fajitas.',
+    color: '#f4a261'
+  },
+  {
+    name: 'Hunan Garden',
+    cuisine: '🥢 Chinese',
+    phone: '(410) 208-1275',
+    address: '11070 Cathell Rd STE 11, Berlin',
+    hours: { 'Daily': '11 AM – 10 PM' },
+    options: 'Takeout & Delivery',
+    rating: '4.7 ⭐',
+    note: 'Near Walgreens. Lunch specials under $10. General Tso\'s, Lo Mein.',
+    color: '#f9c74f'
+  },
+  {
+    name: "Sue's Asian Cuisine",
+    cuisine: '🍣 Chinese · Japanese · Sushi',
+    phone: '(410) 208-2788',
+    address: '11007 Manklin Creek Rd, Berlin',
+    hours: { 'Daily': '11 AM – 9:30 PM' },
+    options: 'Takeout & Delivery',
+    rating: '4.5 ⭐',
+    note: 'Same plaza as Serpone\'s. Sushi + Chinese in one order. Mongolian beef, Hunan shrimp.',
+    color: '#4361ee'
+  },
+  {
+    name: 'Kaiju Sushi & Ramen Bar',
+    cuisine: '🍜 Japanese · Sushi · Ramen',
+    phone: 'Verify via Google',
+    address: '11436 Samuel Bowen Blvd #1, Berlin',
+    hours: { 'Verify': 'via Google Maps' },
+    options: 'Takeout (confirm delivery)',
+    rating: 'Superb ⭐',
+    note: 'Newer dedicated Japanese spot in Berlin. Worth checking for a proper sushi night.',
+    color: '#7209b7'
+  }
+];
+
+// ── Render ─────────────────────────────────────────────
+const today = new Date().toISOString().slice(0, 10);
+const vacStart = new Date('2026-08-08');
+const vacEnd   = new Date('2026-08-16');
+const now      = new Date();
+
+// Countdown
+function updateCountdown() {
+  const diff = vacStart - new Date();
+  if (diff <= 0 && new Date() <= vacEnd) {
+    document.getElementById('countdown').textContent = '🏖️ VACATION MODE';
+  } else if (diff < 0) {
+    document.getElementById('countdown').textContent = '👋 Trip Complete';
+  } else {
+    const days = Math.ceil(diff / 86400000);
+    document.getElementById('countdown').textContent = `⏳ ${days} day${days !== 1 ? 's' : ''} to go!`;
+  }
+}
+updateCountdown();
+
+// Day cards
+const grid = document.getElementById('day-grid');
+DAYS.forEach(day => {
+  const isToday = day.date === today;
+  const isPast  = day.date < today;
+  const card = document.createElement('div');
+  card.className = `day-card ${isToday ? 'today' : ''} ${isPast ? 'past' : ''}`;
+  card.style.borderTopColor = day.color;
+  card.style.borderTopWidth = '4px';
+  card.style.borderTopStyle = 'solid';
+
+  let grandmaHtml = '';
+  if (day.grandma)        grandmaHtml = '<span class="grandma-badge">👵 Grandma here</span>';
+  if (day.grandmaDeparts) grandmaHtml = '<span class="grandma-badge" style="background:#fff3e0;color:#e65100;">👵 Grandma departs</span>';
+
+  let slotsHtml = SLOTS.map(s => {
+    const text = day.slots[s.key];
+    const isEmpty = !text;
+    return `<div class="slot">
+      <span class="slot-icon">${s.icon}</span>
+      <span class="slot-label">${s.label}</span>
+      <span class="slot-text ${isEmpty ? 'empty' : ''}">${isEmpty ? '—' : text}</span>
+    </div>`;
+  }).join('');
+
+  card.innerHTML = `
+    ${isToday ? '<div class="today-banner">⭐ TODAY</div>' : ''}
+    <div class="day-card-header" style="background:${day.color}">
+      <h3>${day.label}${grandmaHtml}</h3>
+      <span class="date-badge">${day.title}</span>
+    </div>
+    <div class="day-card-body">${slotsHtml}</div>`;
+  grid.appendChild(card);
+});
+
+// Tide cards
+const tideGrid = document.getElementById('tide-grid');
+TIDES.forEach(t => {
+  const stars = '⭐'.repeat(t.stars) || '—';
+  const card = document.createElement('div');
+  card.className = `tide-card ${t.type}`;
+  card.innerHTML = `
+    <div class="tide-label">${t.day} · ${t.date}</div>
+    <div class="tide-time">⬇️ Low: ${t.low}</div>
+    <div class="tide-height">Height: ${t.height} ft</div>
+    <div class="tide-window">🕐 Best window: ${t.window}</div>
+    <div class="rating">${stars}</div>
+    <div style="font-size:.72rem;color:#666;margin-top:.3rem">${t.note}</div>`;
+  tideGrid.appendChild(card);
+});
+
+// Restaurant cards
+const restoGrid = document.getElementById('resto-grid');
+RESTAURANTS.forEach(r => {
+  const hoursHtml = Object.entries(r.hours).map(([k, v]) =>
+    `<span style="font-weight:600">${k}:</span><span>${v}</span>`
+  ).join('');
+
+  const card = document.createElement('div');
+  card.className = 'resto-card';
+  card.style.borderTopColor = r.color;
+  card.innerHTML = `
+    <h3>${r.name}</h3>
+    <div class="cuisine">${r.cuisine} &nbsp;·&nbsp; ${r.rating}</div>
+    <div class="resto-row">📞 <a href="tel:${r.phone.replace(/\D/g,'')}">${r.phone}</a></div>
+    <div class="resto-row">📍 ${r.address}</div>
+    <div class="resto-row">🛵 ${r.options}</div>
+    <div class="hours-grid">${hoursHtml}</div>
+    <div style="font-size:.75rem;color:#555;margin-top:.5rem;font-style:italic">${r.note}</div>`;
+  restoGrid.appendChild(card);
+});
+
+// Tabs
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Scroll to today on load
+setTimeout(() => {
+  const todayCard = document.querySelector('.day-card.today');
+  if (todayCard) todayCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}, 300);
+</script>
+
+</body>
+</html>
