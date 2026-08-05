@@ -154,12 +154,29 @@
       margin-left: .3rem;
     }
 
+    .weather-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .35rem .9rem;
+      font-size: .78rem;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+      background: rgba(255,255,255,.6);
+      gap: .4rem;
+    }
+    .weather-bar .wx-icon { font-size: 1.1rem; }
+    .weather-bar .wx-temps { color: var(--dark); }
+    .weather-bar .wx-temps span { color: #888; font-weight: 400; }
+    .weather-bar .wx-rain { color: #1565c0; }
+    .weather-bar.stormy { background: #fff3e0; }
+    .weather-bar.stormy .wx-rain { color: #e65100; }
+
     .today-banner {
       background: linear-gradient(90deg, var(--sand), #f8961e);
       color: var(--dark);
       font-size: .75rem;
       font-weight: 700;
-      text-align: center;
       padding: .3rem;
       letter-spacing: .5px;
     }
@@ -390,7 +407,8 @@ const DAYS = [
       lateAfternoon: '🛝 Ocean Pines Playground',
       dinner: '',
       evening: ''
-    }
+    },
+    weather: { high: 86, low: 76, rain: 55, icon: '⛅', label: 'Partly Sunny' }
   },
   {
     date: '2026-08-09', label: 'Sunday', title: 'Aug 9',
@@ -405,7 +423,8 @@ const DAYS = [
       lateAfternoon: '',
       dinner: '',
       evening: ''
-    }
+    },
+    weather: { high: 87, low: 73, rain: 55, icon: '⛅', label: 'Partly Sunny' }
   },
   {
     date: '2026-08-10', label: 'Monday', title: 'Aug 10',
@@ -421,13 +440,15 @@ const DAYS = [
       lateAfternoon: '',
       dinner: '',
       evening: ''
-    }
+    },
+    weather: { high: 89, low: 76, rain: 19, icon: '🌤', label: 'Mostly Sunny' }
   },
   {
     date: '2026-08-11', label: 'Tuesday', title: 'Aug 11',
     popPopDeparts: true,
     color: '#f3f8ff',
-    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' }
+    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' },
+    weather: { high: 91, low: 74, rain: 16, icon: '🌤', label: 'Mostly Sunny' }
   },
   {
     date: '2026-08-12', label: 'Wednesday', title: 'Aug 12',
@@ -440,12 +461,14 @@ const DAYS = [
       lateAfternoon: '',
       dinner: '',
       evening: ''
-    }
+    },
+    weather: { high: 85, low: 71, rain: 70, icon: '⛈', label: 'T-Storms Possible' }
   },
   {
     date: '2026-08-13', label: 'Thursday', title: 'Aug 13',
     color: '#f3f8ff',
-    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' }
+    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' },
+    weather: { high: 84, low: 69, rain: 63, icon: '⛈', label: 'T-Storms Possible' }
   },
   {
     date: '2026-08-14', label: 'Friday', title: 'Aug 14',
@@ -458,17 +481,20 @@ const DAYS = [
       lateAfternoon: '🏖️ 28th Street Beach (Low tide 3:40 PM — perfect window)',
       dinner: '',
       evening: ''
-    }
+    },
+    weather: null
   },
   {
     date: '2026-08-15', label: 'Saturday', title: 'Aug 15',
     color: '#f3f8ff',
-    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' }
+    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' },
+    weather: null
   },
   {
     date: '2026-08-16', label: 'Sunday', title: 'Aug 16',
     color: '#fce4ec',
-    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' }
+    slots: { earlyMorning: '', morning: '', lunch: '', naptime: '', lateAfternoon: '', dinner: '', evening: '' },
+    weather: null
   }
 ];
 
@@ -645,6 +671,12 @@ DAYS.forEach(day => {
 
   card.innerHTML = `
     ${isToday ? '<div class="today-banner">⭐ TODAY</div>' : ''}
+    ${day.weather ? `<div class="weather-bar${day.weather.rain >= 60 ? ' stormy' : ''}">
+      <span class="wx-icon">${day.weather.icon}</span>
+      <span class="wx-temps">${day.weather.high}° <span>/ ${day.weather.low}°</span></span>
+      <span style="font-size:.72rem;color:#555;font-weight:400">${day.weather.label}</span>
+      <span class="wx-rain">🌧 ${day.weather.rain}%</span>
+    </div>` : ''}
     <div class="day-card-header" style="background:${day.color}">
       <h3>${day.label}${grandmaHtml}</h3>
       <span class="date-badge">${day.title}</span>
