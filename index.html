@@ -269,6 +269,7 @@
 <div class="tabs">
   <button class="tab-btn active" onclick="showTab('itinerary')">📅 Itinerary</button>
   <button class="tab-btn" onclick="showTab('beach')">🌊 Beach & Tides</button>
+  <button class="tab-btn" onclick="showTab('attractions')">🎡 Attractions</button>
   <button class="tab-btn" onclick="showTab('food')">🍕 Takeout</button>
   <button class="tab-btn" onclick="showTab('info')">📍 Info</button>
 </div>
@@ -297,6 +298,13 @@
         <li>NWS forecast: <a href="https://forecast.weather.gov/MapClick.php?CityName=Ocean+City&state=MD&site=AKQ" target="_blank" style="color:var(--ocean)">weather.gov Ocean City MD</a></li>
       </ul>
     </div>
+  </div>
+
+  <!-- ══════════════════ ATTRACTIONS ══════════════════ -->
+  <div class="tab-panel" id="tab-attractions">
+    <div class="section-title">🎡 Family Attractions</div>
+    <p style="font-size:.82rem;color:#555;margin:.3rem 0 .8rem">All within ~20 min of Ocean Pines. Kid ratings based on ages 1½, 3 & 7.</p>
+    <div class="restaurant-grid" id="attraction-grid"></div>
   </div>
 
   <!-- ══════════════════ FOOD ══════════════════ -->
@@ -673,6 +681,105 @@ RESTAURANTS.forEach(r => {
     <div class="hours-grid">${hoursHtml}</div>
     <div style="font-size:.75rem;color:#555;margin-top:.5rem;font-style:italic">${r.note}</div>`;
   restoGrid.appendChild(card);
+});
+
+const ATTRACTIONS = [
+  {
+    name: "Trimper's Rides",
+    icon: '🎠',
+    type: 'Amusement Park',
+    address: '700 S. Ocean Blvd (1st St & Boardwalk), Ocean City',
+    phone: '(410) 289-8617',
+    website: 'trimperrides.com',
+    hours: 'Indoor noon–midnight · Outdoor 2 PM–midnight (summer)',
+    cost: 'No gate fee · Pay per ride (~$1.50/ticket, rides 2–4 tickets) · Ticket books available',
+    kidRating: '⭐⭐⭐ All 3 kids',
+    note: 'Historic 1921 carousel (National Historic Landmark!), kiddie rides for toddlers, bigger rides outside. Indoor section is great on hot/rainy days. Best stop for all three kids.',
+    color: '#e63946'
+  },
+  {
+    name: "Marty's Playland",
+    icon: '🕹️',
+    type: 'Arcade',
+    address: '507 Boardwalk (at 5th St), Ocean City',
+    phone: '(410) 289-9518',
+    website: 'martysplayland.com',
+    hours: 'Daily ~9 AM – midnight (peak summer)',
+    cost: 'No admission · Pay per game with tokens (~$0.25–$1/token)',
+    kidRating: '⭐⭐ Best for 7yo',
+    note: 'One of the oldest arcades on the boardwalk (since 1937). Two floors of classic & modern games, skee-ball, claw machines, ticket redemption. 7yo will love it. Can be loud/overstimulating for the 1.5yo.',
+    color: '#f4a261'
+  },
+  {
+    name: '28th Street Beach',
+    icon: '🏖️',
+    type: 'Beach',
+    address: '28th St & Atlantic Ocean, Ocean City',
+    phone: null,
+    website: 'oceancity.com/webcams',
+    hours: 'Always open · Lifeguards 10 AM–5:30 PM (Memorial Day–Labor Day)',
+    cost: 'Free · Parking ~$1.25–$2/hr metered',
+    kidRating: '⭐⭐⭐ All 3 kids',
+    note: 'Our spot 🏖️ Surf cam, outdoor shower, sandbar at low tide. Wide flat beach — great for toddlers. Mid-town location, family-friendly crowd. Best visited around low tide (see Beach & Tides tab).',
+    color: '#0077b6'
+  },
+  {
+    name: 'Assateague Island',
+    icon: '🐴',
+    type: 'National Seashore & State Park',
+    address: 'NPS: 7206 National Seashore Ln, Berlin · State Park: 7307 Stephen Decatur Hwy, Berlin',
+    phone: 'NPS: (410) 641-1441 · State Park: (410) 641-2120',
+    website: 'nps.gov/asis',
+    hours: 'Daily sunrise–sunset · Visitor Center 9 AM–5 PM',
+    cost: 'NPS: $25/car (7-day) · State Park: $5–9/person (MD residents less)',
+    kidRating: '⭐⭐⭐ All 3 kids',
+    note: 'Wild ponies roam freely — kids will lose it 🐎 Junior Ranger program for the 7yo. Ranger programs daily (pony talks, nature walks, campfire circle). State Park side has lifeguards & showers. Do NOT feed or approach the ponies.',
+    color: '#2dc653'
+  },
+  {
+    name: "Pirate's Cove Mini Golf",
+    icon: '⛳',
+    type: 'Mini Golf',
+    address: '2004 Coastal Hwy (at 20th St), Ocean City',
+    phone: '(410) 289-6848',
+    website: null,
+    hours: 'Daily ~9 AM–11 PM (summer)',
+    cost: '~$9–$11/adult · $7–$9/child (under 3 free)',
+    kidRating: '⭐⭐ Best 3yo+',
+    note: 'Pirate/nautical theme with waterfalls, bridges & ship features. Two 18-hole courses. Big hit with kids — the 7yo and 3yo will both enjoy it. One of the most popular mini golf spots in OC.',
+    color: '#f9c74f'
+  },
+  {
+    name: 'Congo Ocean Mini Golf',
+    icon: '⛳',
+    type: 'Mini Golf',
+    address: '2nd St & Boardwalk (near the Inlet), Ocean City',
+    phone: '(410) 289-0398',
+    website: null,
+    hours: 'Daily ~10 AM–midnight (summer)',
+    cost: '~$8–$10/person · Under 3 free',
+    kidRating: '⭐⭐ Best 3yo+',
+    note: 'Jungle/tropical theme right on the boardwalk. Convenient if already at the south end near Trimper\'s. Compact layout works well for young kids with ocean views.',
+    color: '#43aa8b'
+  }
+];
+
+// Render attractions
+const attractionGrid = document.getElementById('attraction-grid');
+ATTRACTIONS.forEach(a => {
+  const card = document.createElement('div');
+  card.className = 'resto-card';
+  card.style.borderTopColor = a.color;
+  card.innerHTML = `
+    <h3>${a.icon} ${a.name}</h3>
+    <div class="cuisine" style="color:${a.color}">${a.type} &nbsp;·&nbsp; ${a.kidRating}</div>
+    <div class="resto-row">📍 ${a.address}</div>
+    ${a.phone ? `<div class="resto-row">📞 <a href="tel:${a.phone.replace(/\D/g,'')}">${a.phone}</a></div>` : ''}
+    ${a.website ? `<div class="resto-row">🌐 <a href="https://${a.website}" target="_blank">${a.website}</a></div>` : ''}
+    <div class="resto-row">🕐 ${a.hours}</div>
+    <div class="resto-row">💵 ${a.cost}</div>
+    <div style="font-size:.75rem;color:#555;margin-top:.5rem;font-style:italic">${a.note}</div>`;
+  attractionGrid.appendChild(card);
 });
 
 // Tabs
