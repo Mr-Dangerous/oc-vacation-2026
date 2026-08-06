@@ -264,6 +264,72 @@
     .pill-yellow { background: #fff3cd; color: #856404; }
     .pill-blue { background: #cce5ff; color: #004085; }
 
+    /* ── Packing List ── */
+    .pack-section { margin-top: 1rem; }
+    .pack-section-title {
+      font-size: .8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--muted);
+      margin: 1.2rem 0 .4rem;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .pack-list { list-style: none; padding: 0; margin: 0; }
+    .pack-item {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .55rem .9rem;
+      background: var(--card);
+      border-radius: 10px;
+      margin-bottom: .4rem;
+      box-shadow: 0 1px 4px rgba(0,77,102,.08);
+      cursor: pointer;
+      transition: opacity .2s, background .15s;
+      font-size: .88rem;
+      color: var(--dark);
+      font-weight: 500;
+      user-select: none;
+    }
+    .pack-item:hover { background: #eef9ff; }
+    .pack-item.checked { opacity: .45; }
+    .pack-item.checked .pack-label { text-decoration: line-through; color: #999; }
+    .pack-item input[type=checkbox] {
+      width: 1.15rem;
+      height: 1.15rem;
+      accent-color: var(--ocean);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .pack-label { flex: 1; }
+    .pack-progress {
+      background: var(--card);
+      border-radius: 12px;
+      padding: .8rem 1rem;
+      box-shadow: 0 2px 8px rgba(0,77,102,.1);
+      margin-bottom: .5rem;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+    }
+    .pack-progress-bar-wrap {
+      flex: 1;
+      background: #d0eaf5;
+      border-radius: 99px;
+      height: .55rem;
+      overflow: hidden;
+    }
+    .pack-progress-bar {
+      height: 100%;
+      background: var(--ocean);
+      border-radius: 99px;
+      transition: width .3s;
+    }
+    .pack-progress-label { font-size: .8rem; font-weight: 700; color: var(--text); white-space: nowrap; }
+
     @media (max-width: 480px) {
       header h1 { font-size: 1.2rem; }
       main { padding: .8rem .8rem 2rem; }
@@ -289,6 +355,7 @@
   <button class="tab-btn" onclick="showTab('attractions')">🎡 Attractions</button>
   <button class="tab-btn" onclick="showTab('food')">🍕 Takeout</button>
   <button class="tab-btn" onclick="showTab('info')">📍 Info</button>
+  <button class="tab-btn" onclick="showTab('packing')">🧳 Packing</button>
 </div>
 
 <main>
@@ -387,6 +454,18 @@
         <li>🌙 <strong>Evening (~7:30 PM+)</strong> — Adults / older kids only</li>
       </ul>
     </div>
+  </div>
+  <!-- ══════════════════ PACKING LIST ══════════════════ -->
+  <div class="tab-panel" id="tab-packing">
+    <div class="section-title">🧳 Packing List</div>
+    <div class="pack-progress">
+      <span style="font-size:1.3rem">🧳</span>
+      <div class="pack-progress-bar-wrap">
+        <div class="pack-progress-bar" id="pack-bar" style="width:0%"></div>
+      </div>
+      <div class="pack-progress-label" id="pack-count">0 / 0 packed</div>
+    </div>
+    <div id="pack-sections"></div>
   </div>
 
 </main>
@@ -847,6 +926,66 @@ setTimeout(() => {
   const todayCard = document.querySelector('.day-card.today');
   if (todayCard) todayCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }, 300);
+
+// ── Packing List ──────────────────────────────────────
+const PACK_ITEMS = [
+  {
+    section: '👕 Clothes', icon: '👕',
+    items: ['Pack clothes']
+  },
+  {
+    section: '👶 Baby & Toddler Gear', icon: '👶',
+    items: ['Changing pad', 'White noise machines']
+  },
+  {
+    section: '🛏️ Sleep', icon: '🛏️',
+    items: ['Pillows']
+  }
+];
+
+const STORAGE_KEY = 'oc2026-packing';
+const savedPack = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+function packId(section, item) {
+  return section + '::' + item;
+}
+
+function updatePackProgress() {
+  const all = document.querySelectorAll('.pack-item');
+  const done = document.querySelectorAll('.pack-item.checked');
+  const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
+  document.getElementById('pack-bar').style.width = pct + '%';
+  document.getElementById('pack-count').textContent = done.length + ' / ' + all.length + ' packed';
+}
+
+const packSectionsEl = document.getElementById('pack-sections');
+PACK_ITEMS.forEach(group => {
+  const titleEl = document.createElement('div');
+  titleEl.className = 'pack-section-title';
+  titleEl.textContent = group.section;
+  packSectionsEl.appendChild(titleEl);
+
+  const ul = document.createElement('ul');
+  ul.className = 'pack-list';
+  group.items.forEach(item => {
+    const id = packId(group.section, item);
+    const checked = !!savedPack[id];
+    const li = document.createElement('li');
+    li.className = 'pack-item' + (checked ? ' checked' : '');
+    li.innerHTML = `<input type="checkbox" ${checked ? 'checked' : ''}><span class="pack-label">${item}</span>`;
+    li.addEventListener('click', () => {
+      const cb = li.querySelector('input');
+      cb.checked = !cb.checked;
+      li.classList.toggle('checked', cb.checked);
+      savedPack[id] = cb.checked;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPack));
+      updatePackProgress();
+    });
+    ul.appendChild(li);
+  });
+  packSectionsEl.appendChild(ul);
+});
+updatePackProgress();
 </script>
 
 </body>
