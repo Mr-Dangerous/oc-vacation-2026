@@ -524,7 +524,7 @@ const DAYS = [
   {
     date: '2026-08-10', label: 'Monday', title: 'Aug 10',
     grandmaDeparts: true,
-    grandmaLabel: '👵 Grandma departs',
+    grandmaLabel: 'Grandma departs',
     popPop: true,
     color: '#fff8e1',
     slots: {
@@ -749,10 +749,10 @@ DAYS.forEach(day => {
   card.style.borderTopStyle = 'solid';
 
     let grandmaHtml = '';
-    if (day.grandma)        grandmaHtml = '<span class="grandma-badge">👵 Grandma already there</span>';
-    if (day.grandmaDeparts) grandmaHtml = `<span class="grandma-badge" style="background:#fff3e0;color:#e65100;">${day.grandmaLabel || '👵 Grandma departs'}</span>`;
-    if (day.popPop)         grandmaHtml += '<span class="grandma-badge" style="background:#e8f4fd;color:#1565c0;">👴 Pop Pop already there</span>';
-    if (day.popPopDeparts)  grandmaHtml += '<span class="grandma-badge" style="background:#fff3e0;color:#e65100;">👴 Pop Pop departs PM</span>';
+    if (day.grandma)        grandmaHtml = '<span class="grandma-badge">Grandma already there</span>';
+    if (day.grandmaDeparts) grandmaHtml = `<span class="grandma-badge" style="background:#fff3e0;color:#e65100;">${day.grandmaLabel || 'Grandma departs'}</span>`;
+    if (day.popPop)         grandmaHtml += '<span class="grandma-badge" style="background:#e8f4fd;color:#1565c0;">Pop Pop already there</span>';
+    if (day.popPopDeparts)  grandmaHtml += '<span class="grandma-badge" style="background:#fff3e0;color:#e65100;">Pop Pop departs PM</span>';
 
   let slotsHtml = SLOTS.map(s => {
     const text = day.slots[s.key];
@@ -945,10 +945,7 @@ setTimeout(() => {
 
 // ── Packing List ──────────────────────────────────────
 const PACK_ITEMS = [
-  {
-    section: '👕 Clothes', icon: '👕',
-    items: ['Pack clothes']
-  },
+  {\n    section: '👕 Clothes', icon: '👕',\n    items: ['Ellie clothes', 'Penny clothes', 'Lily clothes']\n  },
   {
     section: '👶 Baby & Toddler Gear', icon: '👶',
     items: ['Changing pad', 'White noise machines', 'Child gate', 'One high chair with tray']
