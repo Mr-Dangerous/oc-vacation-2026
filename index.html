@@ -181,6 +181,46 @@
       letter-spacing: .5px;
     }
 
+    /* ── Weather Section ── */
+    .weather-header {
+      display: flex; align-items: center; gap: .6rem; margin: .8rem 0 .4rem;
+    }
+    .weather-source-badge {
+      font-size: .68rem; font-weight: 700; padding: .2rem .55rem; border-radius: 99px;
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .weather-source-badge.accuweather { background: #ff6b00; color: #fff; }
+    .weather-source-badge.nws { background: #1565c0; color: #fff; }
+    .weather-updated { font-size: .72rem; color: #888; }
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: .6rem;
+      margin-bottom: 1.2rem;
+    }
+    .weather-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: .75rem .8rem;
+      box-shadow: 0 2px 8px rgba(0,77,102,.1);
+      border-top: 3px solid var(--ocean);
+      text-align: center;
+    }
+    .weather-card.today-wx { border-top-color: var(--sand); background: #fffdf0; }
+    .weather-card .wx-day { font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+    .weather-card .wx-temps { font-size: 1.1rem; font-weight: 800; color: #222; margin: .2rem 0; }
+    .weather-card .wx-temps span { font-size: .8rem; font-weight: 500; color: #666; }
+    .weather-card .wx-desc { font-size: .7rem; color: #555; margin-bottom: .35rem; line-height: 1.3; }
+    .wx-rain-row { display: flex; justify-content: space-around; font-size: .68rem; margin-top: .3rem; gap: .3rem; }
+    .wx-rain-col { display: flex; flex-direction: column; align-items: center; gap: .1rem; }
+    .wx-rain-label { font-size: .6rem; color: #999; }
+    .wx-rain-pill {
+      background: #e8f4fd; color: #1565c0; border-radius: 99px;
+      padding: .1rem .45rem; font-weight: 700;
+    }
+    .wx-rain-pill.high-rain { background: #fff3e0; color: #e65100; }
+    .wx-rain-pill.very-high-rain { background: #fde8e8; color: #b71c1c; }
+
     /* ── Tide / Beach section ── */
     .tide-grid {
       display: grid;
@@ -370,6 +410,16 @@
   <div class="tab-panel" id="tab-beach">
     <div class="section-title">🏖️ 28th Street Beach — Ocean City, MD</div>
     <p style="font-size:.82rem;color:#555;margin:.3rem 0 .8rem">Surf cam · outdoor shower · sandbar. Best visited around low tide. <span class="pill pill-green">✓ Scheduled Aug 12</span> <span class="pill pill-green">✓ Scheduled Aug 14</span></p>
+
+    <!-- ── WEATHER FORECAST ── -->
+    <div class="weather-header">
+      <strong style="font-size:.9rem">🌤️ Weather Forecast — Ocean Pines, MD</strong>
+      <span class="weather-source-badge accuweather">AccuWeather</span>
+      <span class="weather-updated">Updated Aug 7</span>
+    </div>
+    <p style="font-size:.72rem;color:#888;margin:.1rem 0 .6rem">🟠 AccuWeather = manually updated from screenshot &nbsp;|&nbsp; 🔵 NWS = pulled live by cron job</p>
+    <div class="weather-grid" id="weather-grid"></div>
+
     <div class="tide-grid" id="tide-grid"></div>
 
     <div class="info-card" style="margin-top:1.2rem">
@@ -942,6 +992,65 @@ setTimeout(() => {
   const todayCard = document.querySelector('.day-card.today');
   if (todayCard) todayCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }, 300);
+
+// ── Weather Forecast ──────────────────────────────────────
+const WEATHER_DATA = {
+  source: 'AccuWeather',
+  updated: 'Aug 7, 2026',
+  days: [
+    { date: '2026-08-08', label: 'Sat Aug 8',  high: 86, low: 75, desc: 'Mostly sunny',       rainDay: 25, rainNight: 25 },
+    { date: '2026-08-09', label: 'Sun Aug 9',  high: 87, low: 73, desc: 'Partly cloudy',      rainDay: 55, rainNight: 16 },
+    { date: '2026-08-10', label: 'Mon Aug 10', high: 89, low: 76, desc: 'Mostly sunny',       rainDay: 25, rainNight: 22 },
+    { date: '2026-08-11', label: 'Tue Aug 11', high: 93, low: 76, desc: 'Partly sunny, hot',  rainDay: 30, rainNight: 55 },
+    { date: '2026-08-12', label: 'Wed Aug 12', high: 87, low: 73, desc: 'Partly cloudy',      rainDay: 30, rainNight: 82 },
+    { date: '2026-08-13', label: 'Thu Aug 13', high: null, low: null, desc: '—',              rainDay: null, rainNight: null },
+    { date: '2026-08-14', label: 'Fri Aug 14', high: null, low: null, desc: '—',              rainDay: null, rainNight: null },
+    { date: '2026-08-15', label: 'Sat Aug 15', high: null, low: null, desc: '—',              rainDay: null, rainNight: null },
+    { date: '2026-08-16', label: 'Sun Aug 16', high: null, low: null, desc: '—',              rainDay: null, rainNight: null },
+  ]
+};
+
+function rainPillClass(pct) {
+  if (pct == null) return '';
+  if (pct >= 70) return 'very-high-rain';
+  if (pct >= 45) return 'high-rain';
+  return '';
+}
+
+const weatherGridEl = document.getElementById('weather-grid');
+const todayStr = new Date().toISOString().slice(0,10);
+
+WEATHER_DATA.days.forEach(day => {
+  const isToday = day.date === todayStr;
+  const hasData = day.high !== null;
+  const card = document.createElement('div');
+  card.className = 'weather-card' + (isToday ? ' today-wx' : '');
+
+  const tempHtml = hasData
+    ? `<div class="wx-temps">${day.high}° <span>/ ${day.low}°</span></div>`
+    : `<div class="wx-temps" style="color:#bbb;font-size:.85rem">TBD</div>`;
+
+  const rainHtml = hasData
+    ? `<div class="wx-rain-row">
+        <div class="wx-rain-col">
+          <span class="wx-rain-label">☀️ Day</span>
+          <span class="wx-rain-pill ${rainPillClass(day.rainDay)}">${day.rainDay}%</span>
+        </div>
+        <div class="wx-rain-col">
+          <span class="wx-rain-label">🌙 Night</span>
+          <span class="wx-rain-pill ${rainPillClass(day.rainNight)}">${day.rainNight}%</span>
+        </div>
+      </div>`
+    : `<div style="font-size:.68rem;color:#bbb;margin-top:.3rem">No data yet</div>`;
+
+  card.innerHTML = `
+    <div class="wx-day">${day.label}${isToday ? ' 📍' : ''}</div>
+    ${tempHtml}
+    <div class="wx-desc">${day.desc}</div>
+    ${rainHtml}
+  `;
+  weatherGridEl.appendChild(card);
+});
 
 // ── Packing List ──────────────────────────────────────
 const PACK_ITEMS = [
